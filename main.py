@@ -2,6 +2,7 @@ import ObjectList, objectCreator
 from PIL import Image, ImageTk, ImageDraw
 from numpy import ones, uint8
 import Point
+import numpy as np
 from tkinter import Tk, Label, PhotoImage
 from tkinter import ttk
 focal_length = 50
@@ -18,6 +19,11 @@ label.place(x=400, y=400)
 label.pack()
 
 
+right_move_vector = np.array([8, 0, 0])
+left_move_vector = np.array([-8, 0, 0])
+up_move_vector = np.array([0, 8, 0])
+down_move_vector = np.array([0, -8, 0])
+
 def castPoint( point_to_cast, focal_length, image_width, image_height):
     k = focal_length / point_to_cast.y
     x = ( k * point_to_cast.x ) + ( image_width / 2)
@@ -28,6 +34,9 @@ def leftKey(event):
     print("Left key pressed")
 
 def rightKey(event):
+    global right_move_vector
+    global ol
+    ol.sum_on_all_objects(right_move_vector)
     print("Right key pressed")
 
 def upKey(event):
@@ -44,7 +53,10 @@ def eKey(event):
 
 def kKey(event):
     global focal_length
-    focal_length -= 5
+    if focal_length -5 < 0:
+        focal_length = 0
+    else:
+        focal_length -= 5
     print("Decreased focal length to {0}".format(focal_length))
     redraw_image()
 
@@ -88,7 +100,6 @@ def redraw_image():
 
 grey_image = ones([image_width, image_height], dtype=uint8)*130
 grey_image = Image.fromarray(grey_image)
-
 ol = ObjectList.MasterObjectList()
 
 object_creator = objectCreator.objectCreator()

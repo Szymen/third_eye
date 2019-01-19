@@ -47,3 +47,18 @@ class Cube:
             (self.seven, self.eight),
             (self.eight, self.five)
         ]
+
+    def get_points(self):
+        return [
+            self.one  ,
+            self.two  ,
+            self.three,
+            self.four ,
+            self.five ,
+            self.six  ,
+            self.seven,
+            self.eight
+            ]
+
+    def set_points(self, pointArray):
+        self.one, self.two, self.three, self.four, self.five, self.six, self.seven, self.eight = pointArray
