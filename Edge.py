@@ -16,7 +16,6 @@ class Edge:
 
 
     def __add__(self, vector_to_add):
-        # print("[EDGE]: Adding to {0} and {1}".format(self.pointA, self.pointB))
         return Edge(
             self.pointA + vector_to_add,
             self.pointB + vector_to_add
@@ -27,11 +26,3 @@ class Edge:
             self.pointA * vector_to_mult,
             self.pointB * vector_to_mult
         )
-
-        # print("[EDGE]_after: {0}".format(new_edge))
-        # return new_edge
-
-    # def __init__(self, xa, ya, za, xb, yb, zb):
-    #     self.pointA = Point.Point(xa, ya, za)
-    #     self.pointB = Point.Point(xb, yb, zb)
-

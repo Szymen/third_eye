@@ -12,16 +12,17 @@ class Point:
         return "({0}, {1}, {2})".format(self.x, self.y, self.z)
 
     def __add__(self, vector_to_add):
-        # print("[POINT]: Adding {0} to {1} = {2}".format(vector_to_add, self, np.add(self.get_coords_as_array(), vector_to_add)))
         foo = Point(0, 0, 0)
         foo.set_coords_from_array( np.add( self.get_coords_as_array(), vector_to_add ))
-        # print("[POINT]: After adding vector {0}".format(foo))
         return foo
 
     def __mul__(self, other):
         foo = Point(0, 0, 0)
-        foo.set_coords_from_array( np.multiply(self.get_coords_as_array(), other))
-        # print("[POINT]: After adding vector {0}".format(foo))
+        coords = np.matrix( self.get_coords_as_array() )
+        coords.transpose()
+        mat = other
+        res = np.matmul(self.get_coords_as_array(), other)
+        foo.set_coords_from_array( res )
         return foo
 
     def get_coords_as_array(self):
@@ -29,9 +30,6 @@ class Point:
 
     def set_coords_from_array(self, array):
         self.x, self.y, self.z = array
-
-    def multiply(self, vector):
-        self.set_coords_from_array( np.multiply( self.get_coords_as_array(), vector) )
 
     def add_vector(self, vector):
         self.set_coords_from_array( np.add( self.get_coords_as_array(), vector) )

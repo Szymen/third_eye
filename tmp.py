@@ -5,16 +5,34 @@ import Edge
 import Point
 import numpy as np
 import dead_kitten
+import Cube
+from Point import Point
 
-edges = [
-    Edge.Edge(
-     Point.Point(2,3,4),
-     Point.Point(1,2,3)
-    )
-]
+# a = np.array([1,2,3])
+# a = a.transpose()
+# m = np.matrix(a).transpose()
+# print(a)
+# print(m)
+
+# exit(1)
+# edges = [
+#     Edge.Edge(
+#      Point.Point(2,3,4),
+#      Point.Point(1,2,3)
+#     )
+# ]
 
 
-a = Figure.Figure(edges)
+a = Cube.Cube(
+    Point(15, 15, 15),  # 1.
+    Point(30, 15, 15),  # 2.
+    Point(30, 30, 15),  # 3.
+    Point(15, 30, 15),  # 4.
+    Point(15, 15, 30),  # 5.
+    Point(30, 15, 30),  # 6.
+    Point(30, 30, 30),  # 7.
+    Point(15, 30, 30)   # 8.
+)
 # a.add_vector
 
 # one = np.array([1,1,1])
@@ -29,16 +47,20 @@ a = Figure.Figure(edges)
 # a.print_edges()
 
 #
-foo = Edge.Edge(
-     Point.Point(1,1,3),
-     Point.Point(1,1,1)
-    )
-print("Before {0}".format(foo))
+# foo = Edge.Edge(
+#      Point.Point(1,1,3),
+#      Point.Point(1,1,1)
+#     )
+print("Before {0}".format(a))
 # foo = foo + ([1, 2, 3])
-rot = dead_kitten.get_rotation_matrix(0,90,0)
-foo = foo * rot
-print("after: {0}".format(foo))
-print(rot)
+# rot = dead_kitten.get_rotation_matrix(0, 0, 90)
+rot = [1,1,1]
+# print("Rot matrix: {0}".format(rot))
+a.add_vector(rot)
+# a.multiply_by_matrix(rot)
+print("after: {0}".format(a))
+# print(rot)
+
 
 
 

@@ -5,6 +5,8 @@ import Point
 import numpy as np
 from tkinter import Tk, Label, PhotoImage
 from tkinter import ttk
+import time
+import dead_kitten
 focal_length = 50
 image_width = 750
 image_height = 750
@@ -19,8 +21,22 @@ label.place(x=400, y=400)
 label.pack()
 
 
+xp_rotate_matrix=dead_kitten.get_rotation_matrix(15,0,0)
+xm_rotate_matrix=dead_kitten.get_rotation_matrix(-15,0,0)
+yp_rotate_matrix=dead_kitten.get_rotation_matrix(0,15,0)
+ym_rotate_matrix=dead_kitten.get_rotation_matrix(0,-15,0)
+zp_rotate_matrix=dead_kitten.get_rotation_matrix(0,0,15)
+zm_rotate_matrix=dead_kitten.get_rotation_matrix(0,0,-15)
+
+
+
+
+forward_move_vector = np.array([0, 0, 8]) 
+backward_move_vector = np.array([0, 0, -8])
+
 right_move_vector = np.array([8, 0, 0])
 left_move_vector = np.array([-8, 0, 0])
+
 up_move_vector = np.array([0, 8, 0])
 down_move_vector = np.array([0, -8, 0])
 
@@ -32,26 +48,75 @@ def castPoint( point_to_cast, focal_length, image_width, image_height):
 
 def leftKey(event):
     print("Left key pressed")
-
+    global left_move_vector
+    move_all(left_move_vector)
+    redraw_image()
+    
 def rightKey(event):
-    global right_move_vector
-    global ol
-    ol.sum_on_all_objects(right_move_vector)
     print("Right key pressed")
+    global right_move_vector
+    move_all(right_move_vector)
+    redraw_image()
 
 def upKey(event):
     print("Up key pressed")
+    global up_move_vector
+    move_all(up_move_vector)
+    redraw_image()
 
 def downKey(event):
     print("Down key pressed")
+    global down_move_vector
+    move_all(down_move_vector)
+    redraw_image()
 
-def qKey(event):
-    print("Q key pressed")
+def forwardKey(event):
+    print("Forward key pressed")
+    global forward_move_vector
+    move_all(forward_move_vector)
+    redraw_image()
 
-def eKey(event):
-    print("E key pressed")
+def backwardKey(event):
+    print("Backward key pressed")
+    global backward_move_vector
+    move_all(backward_move_vector)
+    redraw_image()
 
-def kKey(event):
+def rot_xp_Key(event):
+    global xp_rotate_matrix
+    rotate_all(xp_rotate_matrix)
+    redraw_image()
+    
+def rot_xm_Key(event):
+    global xm_rotate_matrix
+    rotate_all(xm_rotate_matrix)
+    redraw_image()
+    
+def rot_yp_Key(event):
+    global yp_rotate_matrix
+    rotate_all(yp_rotate_matrix)
+    redraw_image()
+    
+def rot_ym_Key(event):
+    global ym_rotate_matrix
+    rotate_all(ym_rotate_matrix)
+    redraw_image()
+    
+def rot_zp_Key(event):
+    global zp_rotate_matrix
+    rotate_all(zp_rotate_matrix)
+    redraw_image()
+    
+def rot_zm_Key(event):
+    global zm_rotate_matrix
+    rotate_all(zm_rotate_matrix)
+    redraw_image()
+    
+
+
+
+
+def shrinkKey(event):
     global focal_length
     if focal_length -5 < 0:
         focal_length = 0
@@ -60,7 +125,7 @@ def kKey(event):
     print("Decreased focal length to {0}".format(focal_length))
     redraw_image()
 
-def lKey(event):
+def zoomKey(event):
     global focal_length
     focal_length += 5
     print("Increased focal length to {0}".format(focal_length))
@@ -68,23 +133,19 @@ def lKey(event):
 
 
 
-def draw_objects( object_list ):
+def draw_objects( wiadro ):
 
     grey_image = ones([image_width, image_height], dtype=uint8) * 130
     grey_image = Image.fromarray(grey_image)
 
     draw = ImageDraw.Draw(grey_image)
-    print("Redrawing with Focal_length: {0}".format(focal_length))
-    for object_item in object_list.get_all_objects():
-        print("Drawing object: {0}".format(object_item.__class__.__name__))
+    for object_item in wiadro:
         object_lines = object_item.get_edges()
         for object_edge in object_lines:
-            a = Point.Point(object_edge[0].x, object_edge[0].y, object_edge[0].z)
-            b = Point.Point(object_edge[1].x, object_edge[1].y, object_edge[1].z)
             draw.line(
                 [
-                    castPoint(a, focal_length, image_width, image_height),
-                    castPoint(b, focal_length, image_width, image_height)
+                    castPoint(object_edge.pointA, focal_length, image_width, image_height),
+                    castPoint(object_edge.pointB, focal_length, image_width, image_height)
                 ]
                 , fill=255
             )
@@ -93,9 +154,24 @@ def draw_objects( object_list ):
 def redraw_image():
     global label
     global grey_image
-    grey_image = draw_objects( ol )
+    global ol
+
+    tmp_list = ol.get_all_objects()
+    grey_image = draw_objects(tmp_list)
+
     label.config(image=grey_image)
-    print("Image was redrawn")
+
+
+def move_all( move_vector ):
+    global ol
+    for object_item in ol.get_all_objects():
+        object_item.add_vector(move_vector)
+
+def rotate_all( rot_vector ):
+    global ol
+    for object_item in ol.get_all_objects():
+        object_item.multiply_by_matrix(rot_vector)
+
 
 
 grey_image = ones([image_width, image_height], dtype=uint8)*130
@@ -104,24 +180,32 @@ ol = ObjectList.MasterObjectList()
 
 object_creator = objectCreator.objectCreator()
 object_creator.case_two(ol) # case one has one line and one cube
+
 redraw_image()
 
-#
-# panel = Label(window, image=draw_objects(ol))
-# panel.config( image=PhotoImage(file="Stage1.gif"))
-# panel = Label(window, image=PhotoImage(file="Stage1.gif"))
-# panel.pack()
 
 
-window.bind('<a>', leftKey)
-window.bind('<d>', rightKey)
-window.bind('<w>', upKey)
-window.bind('<s>', downKey)
-window.bind('<q>', qKey)
-window.bind('<e>', eKey)
+window.bind('<d>', leftKey)    
+window.bind('<a>', rightKey)
+window.bind('<r>', downKey)
+window.bind('<f>', upKey)
 
-window.bind('<k>', kKey)
-window.bind('<l>', lKey)
+window.bind('<w>', backwardKey) 
+window.bind('<s>', forwardKey)
+
+window.bind('<t>', zoomKey)
+window.bind('<g>', shrinkKey)
+
+
+
+window.bind('<i>', rot_xp_Key)
+window.bind('<k>', rot_xm_Key)
+
+window.bind('<j>', rot_yp_Key)
+window.bind('<l>', rot_ym_Key)
+
+window.bind('<u>', rot_zp_Key)
+window.bind('<o>', rot_zm_Key)
 
 
 
