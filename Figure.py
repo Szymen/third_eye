@@ -5,6 +5,7 @@ import numpy as np
 class Figure:
 
     edges = []
+    walls = []
 
     def __init__(self, edges):
         self.edges = edges
@@ -29,3 +30,8 @@ class Figure:
     def print_edges(self):
         for edge_item in self.edges:
             print("[FIGURE]_print_edges: {0}".format(edge_item))
+
+
+    def get_walls(self):
+        return self.walls
+

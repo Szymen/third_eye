@@ -1,70 +1,98 @@
+# from PIL import Image, ImageDraw
+
+# # PIL.Image
+# im = Image.open("Stage0.gif")
+# draw = ImageDraw.Draw(im)
+# draw.polygon(((0,100),(15,120),(120,130),(100,50),(75,10)), fill=(130,255,255))
 
 
-import Figure
+# im.save("proba.gif", format='png' )
+
 import Edge
 import Point
-import numpy as np
-import dead_kitten
-import Cube
-from Point import Point
 
-# a = np.array([1,2,3])
-# a = a.transpose()
-# m = np.matrix(a).transpose()
-# print(a)
-# print(m)
-
-# exit(1)
-# edges = [
-#     Edge.Edge(
-#      Point.Point(2,3,4),
-#      Point.Point(1,2,3)
-#     )
-# ]
-
-
-a = Cube.Cube(
-    Point(15, 15, 15),  # 1.
-    Point(30, 15, 15),  # 2.
-    Point(30, 30, 15),  # 3.
-    Point(15, 30, 15),  # 4.
-    Point(15, 15, 30),  # 5.
-    Point(30, 15, 30),  # 6.
-    Point(30, 30, 30),  # 7.
-    Point(15, 30, 30)   # 8.
-)
-# a.add_vector
-
-# one = np.array([1,1,1])
-# two = np.array([1,2,3])
-# three = np.add(one, two)
-# print("One {0}".format(one))
-# print("two {0}".format(two))
-# print("three {0}".format(three))
-
-# a.print_edges()
-# a.add_vector([1, 1, 1, 0])
-# a.print_edges()
-
-#
-# foo = Edge.Edge(
-#      Point.Point(1,1,3),
-#      Point.Point(1,1,1)
-#     )
-print("Before {0}".format(a))
-# foo = foo + ([1, 2, 3])
-# rot = dead_kitten.get_rotation_matrix(0, 0, 90)
-rot = [1,1,1]
-# print("Rot matrix: {0}".format(rot))
-a.add_vector(rot)
-# a.multiply_by_matrix(rot)
-print("after: {0}".format(a))
-# print(rot)
+e_list = [
+    Edge.Edge( Point.Point(1,1,1), Point.Point(3,1,1) ),
+    Edge.Edge( Point.Point(3,1,1), Point.Point(3,1,3) ),
+    Edge.Edge( Point.Point(3,1,3), Point.Point(1,1,3) ),
+    Edge.Edge( Point.Point(1,1,3), Point.Point(1,1,1) ),
+    
+    Edge.Edge( Point.Point(1,1,1), Point.Point(3,1,1)  ),
+    Edge.Edge( Point.Point(3,1,1), Point.Point(3,3,1)  ),
+    Edge.Edge( Point.Point(3,3,1), Point.Point(1,3,1)  ),
+    Edge.Edge( Point.Point(1,3,1), Point.Point(1,1,1)  )
+    # Edge.Edge( Point.Point(), Point.Point()  ),
+    # Edge.Edge( Point.Point(), Point.Point()  ),
+    # Edge.Edge( Point.Point(), Point.Point()  ),
+    # Edge.Edge( Point.Point(), Point.Point()  ),
+    # Edge.Edge( Point.Point(), Point.Point()  ),
+]
 
 
 
+def check_presence(needle, haystack):
+    for iter in haystack:
+        if needle.x == iter.x and needle.y == iter.y and needle.z == iter.z:
+            return True
+    return False
 
-# a, b ,c = np.array([1,2,3])
-# print("A: {0}".format(a))
-# print("B: {0}".format(b))
-# print("C: {0}".format(c))
+
+
+def create_walls_from_edges(edges):
+    print(edges)
+    print("Przyszlo:")
+    walls_list = []
+    all_points = []
+
+
+    for edge_item in edges:
+        # print(edge_item)
+        a = edge_item.pointA
+        b = edge_item.pointB
+        print("Processing {0}".format(a))
+        if check_presence(a, all_points):
+            print("WAS: There was already point {0} in all_points".format(a))
+            for i in range(len (walls_list) ):
+                if check_presence(a, walls_list[i]):
+                    walls_list[i].append(b)
+        else:
+            print("ADD: There was no point {0} in all_points, adding".format(a))
+            all_points.append(a)
+            walls_list.append([a, b])
+            print("Added new wall, added ")
+            # print(all_points)
+
+        print("Processing {0}".format(a))
+        if check_presence(b, all_points):
+            print("WAS: There was already point {0} in all_points".format(b))
+            for i in range(len (walls_list) ):
+                if check_presence(b, walls_list[i]):
+                    walls_list[i].append(a)
+        else:
+            print("ADD: There was no point {0} in all_points, adding".format(b))
+            all_points.append(b)
+            walls_list.append([b, a])
+            print("Added new wall, added ")
+            # print(all_points)
+
+    return walls_list
+
+
+foo = create_walls_from_edges(e_list)
+
+master_set = []
+
+for wall in foo:
+    # print("New wall:")
+    tmp = set()
+    for pnt in wall:
+        tmp.add(pnt)
+        # print(">>{0}".format(pnt))
+    master_set.append(tmp)
+
+
+for wall in master_set:
+    print("New wall:")
+    for pnt in wall:
+        print(">>{0}".format(pnt))
+    

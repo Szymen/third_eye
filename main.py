@@ -7,7 +7,10 @@ from tkinter import Tk, Label, PhotoImage
 from tkinter import ttk
 import time
 import dead_kitten
-focal_length = 50
+import random
+from math import sqrt
+
+focal_length = 500
 image_width = 750
 image_height = 750
 
@@ -112,7 +115,16 @@ def rot_zm_Key(event):
     rotate_all(zm_rotate_matrix)
     redraw_image()
     
+def distance_from_wall(wall):
+    a = wall[0]
+    b = wall[1]
+    c = wall[2]
+    d = wall[3]
+    av_x = ( a.x + b.x + c.x + d.x )/ 4
+    av_y = ( a.y + b.y + c.y + d.y )/ 4
+    av_z = ( a.z + b.z + c.z + d.z )/ 4
 
+    return sqrt( pow(av_x, 2) + pow(av_y, 2) + pow(av_z, 2) )
 
 
 
@@ -135,12 +147,14 @@ def zoomKey(event):
 
 def draw_objects( wiadro ):
 
-    grey_image = ones([image_width, image_height], dtype=uint8) * 130
-    grey_image = Image.fromarray(grey_image)
+    # grey_image = ones([image_width, image_height], dtype=uint8) * (130,130,130)
+    grey_image = Image.new( 'RGB', (image_width, image_height), (255,255,255) )
 
+    wall_master_list = []
     draw = ImageDraw.Draw(grey_image)
     for object_item in wiadro:
-        object_lines = object_item.get_edges()
+        
+        object_lines = object_item.get_edges()        
         for object_edge in object_lines:
             draw.line(
                 [
@@ -148,7 +162,33 @@ def draw_objects( wiadro ):
                     castPoint(object_edge.pointB, focal_length, image_width, image_height)
                 ]
                 , fill=255
-            )
+              )
+        for wall_item in object_item.get_walls():
+            wall_master_list.append(wall_item)
+
+
+    wall_master_list = [(wall, distance_from_wall(wall)) for wall in wall_master_list ]
+    wall_master_list = sorted(wall_master_list, key= lambda x: -x[1])
+    # wall_color = 10    
+    for wall_item in wall_master_list:
+        if wall_item[1] > 0:
+            print("Drawing wall with distance: {0}".format(wall_item[1]))
+            draw.polygon(
+                (
+                    castPoint(wall_item[0][0], focal_length, image_width, image_height),
+                    castPoint(wall_item[0][1], focal_length, image_width, image_height),
+                    castPoint(wall_item[0][2], focal_length, image_width, image_height),
+                    castPoint(wall_item[0][3], focal_length, image_width, image_height),                
+                )
+                ,fill= (random.randint(0,255), random.randint(0,255), random.randint(0,255))
+                # ,fill=170
+                )
+        # wall_color += 30
+        else:
+            print("Ommiting wall painting with distance: {0}".format(wall_item[1]))
+
+
+
     return ImageTk.PhotoImage(grey_image)
 
 def redraw_image():
