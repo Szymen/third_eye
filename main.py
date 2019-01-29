@@ -18,7 +18,7 @@ window = Tk()
 window.title("Third eye v3270.1")
 window.configure(background='green')
 window.geometry("{0}x{1}".format(image_width+25, image_height+25))
-startImage = PhotoImage(file="Stage0.gif")
+startImage = PhotoImage(file="Stage1.gif")
 label = ttk.Label(window, image=startImage)
 label.place(x=400, y=400)
 label.pack()
@@ -166,9 +166,12 @@ def draw_objects( wiadro ):
         for wall_item in object_item.get_walls():
             wall_master_list.append(wall_item)
 
-
-    wall_master_list = [(wall, distance_from_wall(wall)) for wall in wall_master_list ]
+    print("Wall amount before split: {0}".format(len(wall_master_list)))
+    wall_master_list=dead_kitten.split_walls(wall_master_list)
+    print("Wall amount after split: {0}".format(len(wall_master_list)))
+    wall_master_list = [(wall, distance_from_wall(wall)) for wall in wall_master_list ]    
     wall_master_list = sorted(wall_master_list, key= lambda x: -x[1])
+    
     # wall_color = 10    
     for wall_item in wall_master_list:
         if wall_item[1] > 0:

@@ -72,9 +72,16 @@ class Cube(Figure.Figure):
         eight=  self.edges[10].pointB
         return [
             (one, two, three, four),
-            (four, eight, seven, three),
-            (eight, seven, six, five),
+            (two, six, seven, three),
+            (six, five, eight, seven),
+            (five, one, four, eight),
             (five, six, two, one),
-            (one, five, eight, four),
-            (two, six, seven, three)
+            (four, three, seven, eight)
         ]
+#     8._______.7
+#     /|      / |
+#  4./_|_____/.3|
+#   |5.|_____|__|. 6
+#   |  /     | /
+#   | /      |/
+# 1.|________|.2
